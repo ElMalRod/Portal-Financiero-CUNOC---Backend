@@ -27,7 +27,17 @@ const AuthController = {
         }
       });
     });
-  }
+  },
+
+getAllUsers:(req, res) => {
+    UserModel.findAllUsers((err, users) => {
+        if (err) {
+            return res.status(500).json({ error: 'Error al recuperar usuarios' });
+        }
+        res.status(200).json(users);
+    });
+}
+
 };
 
 module.exports = AuthController;

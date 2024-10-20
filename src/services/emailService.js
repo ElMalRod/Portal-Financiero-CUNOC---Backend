@@ -9,10 +9,10 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const sendEmail = async (to, subject, text, html = null) => {
     const msg = {
         to: to, // Destinatario
-        from: process.env.EMAIL_USER, // Dirección de envío (debe estar verificada en SendGrid)
+        from: process.env.EMAIL_USER, // Remitente
         subject: subject,
         text: text,
-        ...(html && { html: html }), // Si necesitas HTML
+        ...(html && { html: html }), 
     };
 
     try {
@@ -33,5 +33,5 @@ const sendPinReminder = async (email, pin) => {
 
 module.exports = {
     sendEmail,
-    sendPinReminder // Exporta la función sendPinReminder
+    sendPinReminder 
 };

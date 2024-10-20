@@ -1,4 +1,3 @@
-// src/controllers/AuthController.js
 const UserModel = require('../models/UserModel');
 const emailService = require('../services/emailService');
 const jwt = require('jsonwebtoken');
@@ -19,7 +18,7 @@ const AuthController = {
             // Si el pin es correcto, generar un token JWT
             const token = jwt.sign(
                 { id: user.id_usuario, correo: user.correo }, // Payload
-                'secret_key', // Reemplaza 'secret_key' con una clave secreta más segura
+                'secret_key', 
                 { expiresIn: '1h' } // El token expirará en 1 hora
             );
 

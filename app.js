@@ -1,11 +1,13 @@
-require('dotenv').config(); // Cargar variables de entorno
+require('dotenv').config(); 
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 3000; // Usar el puerto de las variables de entorno si está configurado
-const connection = require('./src/config/dbConnection'); // Importar la conexión MySQL
+const port = process.env.PORT || 3000; 
+const connection = require('./src/config/dbConnection'); 
 const userRoutes = require('./src/routes/userRoutes');
 const authRoutes = require('./src/routes/authRoutes');
-const commentRoutes = require('./src/routes/commentRoutes'); // Importa las rutas de comentarios
+const commentRoutes = require('./src/routes/commentRoutes');
+const movimientosRoutes = require('./src/routes/movimientoRoutes');
+const cuentaRoutes = require('./src/routes/cuentaRoutes');
 
 // Middleware para manejar JSON
 app.use(express.json());
@@ -22,7 +24,8 @@ connection.connect((err) => {
     app.use('/api/users', userRoutes);
     app.use('/api/auth', authRoutes);
     app.use('/api/comentarios', commentRoutes);
-
+    app.use('/api/movimientos', movimientosRoutes);
+    app.use('/api/cuentas', cuentaRoutes);
     // Ruta básica
     app.get('/', (req, res) => {
         res.send('¡Hola Mundo desde Node.js y Express!');

@@ -11,6 +11,32 @@ const UserModel = {
                 callback(null, results[0]);
             }
         });
+    },
+    findAllUsers: (callback) => {
+        const query = `
+            SELECT 
+                u.id_usuario, 
+                u.nombre_usuario, 
+                u.correo, 
+                u.pin, 
+                u.notifyme, 
+                t.numero_tarjeta, 
+                tc.nombre_tipo AS tipo_cuenta, 
+                t.intentos_fallidos, 
+                t.estado 
+            FROM usuarios u
+            LEFT JOIN tarjetas_credito t ON u.id_usuario = t.id_usuario
+            LEFT JOIN tipos_cuenta tc ON t.id_tipo_cuenta = tc.id_tipo_cuenta;
+        `;
+
+        connection.query(query, (err, results) => {
+            if (err) {
+                console.error('Error en la consulta:', err);
+                callback(err, null);
+            } else {
+                callback(null, results);
+            }
+        });
     }
 };
 

@@ -1,5 +1,4 @@
-// src/models/CommentModel.js
-const db = require('../config/dbConnection'); // Configuración de la base de datos
+const db = require('../config/dbConnection');
 
 const CommentModel = {
 
@@ -21,7 +20,7 @@ const CommentModel = {
             JOIN usuarios u ON c.id_usuario = u.id_usuario
             ORDER BY c.fecha_comentario DESC
             LIMIT 2
-        `; // Ajusta el nombre de las columnas y tablas según tu base de datos
+        `; 
 
         db.query(query, (err, results) => {
             if (err) {
