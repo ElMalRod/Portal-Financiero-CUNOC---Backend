@@ -82,7 +82,7 @@ const CuentaModel = {
                     return callback(err);
                 }
 
-                // Ahora eliminar los registros de cierres_cuentas para el usuario antes de eliminar las tarjetas
+                //eliminar los registros de cierres_cuentas para el usuario antes de eliminar las tarjetas
                 const queryEliminarCierre = `
                     DELETE FROM cierres_cuentas
                     WHERE id_tarjeta IN (SELECT id_tarjeta FROM tarjetas_credito WHERE id_usuario = ?)`;
@@ -95,7 +95,8 @@ const CuentaModel = {
 
                     // Finalmente, eliminar las tarjetas
                     const queryEliminar = `
-                        DELETE FROM tarjetas_credito
+                        UPDATE tarjetas_credito
+                        SET estado = 'ELIMINADO'
                         WHERE id_usuario = ?`;
                     db.query(queryEliminar, [id_usuario], (err) => {
                         if (err) {

@@ -8,6 +8,9 @@ const authRoutes = require('./src/routes/authRoutes');
 const commentRoutes = require('./src/routes/commentRoutes');
 const movimientosRoutes = require('./src/routes/movimientoRoutes');
 const cuentaRoutes = require('./src/routes/cuentaRoutes');
+const tipoCambioRoutes = require('./src/routes/tipoCambioRoutes');
+const saldoRoutes = require('./src/routes/saldoRoutes');
+const reportesRoutes = require('./src/routes/reportesRoutes');
 
 // Middleware para manejar JSON
 app.use(express.json());
@@ -26,6 +29,9 @@ connection.connect((err) => {
     app.use('/api/comentarios', commentRoutes);
     app.use('/api/movimientos', movimientosRoutes);
     app.use('/api/cuentas', cuentaRoutes);
+    app.use('/api/tipo-cambio', tipoCambioRoutes);
+    app.use('/api/saldo', saldoRoutes);
+    app.use('/api/reportes', reportesRoutes);
     // Ruta básica
     app.get('/', (req, res) => {
         res.send('¡Hola Mundo desde Node.js y Express!');

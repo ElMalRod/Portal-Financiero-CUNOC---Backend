@@ -29,7 +29,7 @@ CREATE TABLE tarjetas_credito (
     saldo_actual DECIMAL(10, 2) DEFAULT 0.00,
     limite_credito DECIMAL(10, 2) NOT NULL,
     intentos_fallidos INT DEFAULT 0,
-    estado ENUM('activa', 'bloqueada', 'deshabilitada') DEFAULT 'activa',
+    estado ENUM('activa', 'bloqueada', 'deshabilitada', 'ELIMINADO') DEFAULT 'activa',
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
     FOREIGN KEY (id_tipo_cuenta) REFERENCES tipos_cuenta(id_tipo_cuenta)

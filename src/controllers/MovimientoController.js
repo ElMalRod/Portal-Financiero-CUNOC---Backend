@@ -2,7 +2,7 @@ const MovimientoModel = require('../models/MovimientoModel');
 
 const MovimientoController = {
     obtenerMovimientosPorUsuario: (req, res) => {
-        const { id_usuario } = req.body; // Asegúrate de obtener el ID del usuario del cuerpo de la solicitud
+        const { id_usuario } = req.body;
 
         MovimientoModel.obtenerReporteMovimientos(id_usuario, (err, resultados) => {
             if (err) {
