@@ -29,6 +29,8 @@ const AuthController = {
                     id: user.id_usuario,
                     nombre: user.nombre_usuario,
                     correo: user.correo,
+                    notifyme: user.notifyme,
+                    rol: user.rol,
                 },
             });
         });
