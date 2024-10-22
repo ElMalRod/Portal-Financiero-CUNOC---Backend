@@ -20,15 +20,12 @@ const CuentaModel = {
     },
 
     // Crear un nuevo usuario si no existe
-    crearUsuario: (nombre_usuario, correo, pin, notify = false, callback) => {
-        // Convertir notify a 1 o 0
-        const notifyValue = notify ? 1 : 0;
-
+    crearUsuario: (nombre_usuario, correo, pin, notify, rol, callback) => {
         const query = `
-            INSERT INTO usuarios (nombre_usuario, correo, pin, notifyme)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO usuarios (nombre_usuario, correo, pin, notifyme, rol)
+            VALUES (?, ?, ?, ?, ?)
         `;
-        db.query(query, [nombre_usuario, correo, pin, notifyValue], (err, result) => {
+        db.query(query, [nombre_usuario, correo, pin, notify, rol], (err, result) => {
             if (err) {
                 return callback(err);
             }

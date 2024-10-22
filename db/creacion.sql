@@ -153,3 +153,6 @@ use portal_financiero;
 ALTER TABLE cierres_cuentas
 ADD COLUMN id_usuario INT,
 ADD FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario);
+
+-- Cambios en la estructura de la base de datos ROl
+ALTER TABLE usuarios ADD COLUMN rol ENUM('cliente', 'admin') NOT NULL DEFAULT 'cliente';
