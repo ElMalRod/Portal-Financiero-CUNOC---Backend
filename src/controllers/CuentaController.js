@@ -8,7 +8,7 @@ const CuentaController = {
 
     // Crear una nueva cuenta
     crearCuenta: (req, res) => {
-        const { nombre_usuario, tipo_cuenta, numero_tarjeta } = req.body;
+        const { nombre_usuario, tipo_cuenta, numero_tarjeta, notify = false } = req.body; // Obtener notify del cuerpo de la solicitud
 
         // Validar el tipo de cuenta
         if (!['normal', 'gold'].includes(tipo_cuenta)) {
@@ -45,15 +45,16 @@ const CuentaController = {
                             return res.status(500).json({ error: 'Error al crear la cuenta' });
                         }
                         res.status(201).json({ 
-                                message: 'Cuenta creada exitosamente', 
-                                corrreo: correo,
-                                pin: pin});
+                            message: 'Cuenta creada exitosamente', 
+                            corrreo: correo,
+                            pin: pin 
+                        });
                     });
                 };
 
                 if (!usuarioExistente) {
-                    // Crear el usuario
-                    CuentaModel.crearUsuario(nombre_usuario, correo, pin, (err, usuarioId) => {
+                    // Crear el usuario con el parámetro notify
+                    CuentaModel.crearUsuario(nombre_usuario, correo, pin, notify, (err, usuarioId) => {
                         if (err) {
                             console.error('Error al crear el usuario:', err);
                             return res.status(500).json({ error: 'Error al crear el usuario' });
