@@ -11,6 +11,9 @@ const cuentaRoutes = require('./src/routes/cuentaRoutes');
 const tipoCambioRoutes = require('./src/routes/tipoCambioRoutes');
 const saldoRoutes = require('./src/routes/saldoRoutes');
 const reportesRoutes = require('./src/routes/reportesRoutes');
+const cors = require('cors'); // Importa cors
+
+app.use(cors());
 
 // Middleware para manejar JSON
 app.use(express.json());
