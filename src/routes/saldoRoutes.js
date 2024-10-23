@@ -5,5 +5,5 @@ const saldoController = require('../controllers/saldoController');
 
 // Ruta para reducir el saldo
 router.post('/reducir-saldo', saldoController.reducirSaldo);
-
+router.get('/obtener-tarjetas', saldoController.obtenerTarjetas);
 module.exports = router;

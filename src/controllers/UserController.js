@@ -36,7 +36,20 @@ getAllUsers:(req, res) => {
         }
         res.status(200).json(users);
     });
+},
+
+// Nuevo método para obtener usuario por ID
+getUserById: (req, res) => {
+    const { id } = req.params; // Obtener el ID del parámetro de la ruta
+    
+    UserModel.findUserById(id, (err, user) => {
+        if (err || !user) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+        res.status(200).json(user);
+    });
 }
+
 
 };
 

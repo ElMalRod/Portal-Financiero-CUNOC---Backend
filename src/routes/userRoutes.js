@@ -4,6 +4,6 @@ const UserController = require('../controllers/UserController');
 
 // Rutas para manejar cuentas
 router.get('/usuarios', UserController.getAllUsers);
-
+router.get('/usuarios/:id', UserController.getUserById);
 
 module.exports = router;

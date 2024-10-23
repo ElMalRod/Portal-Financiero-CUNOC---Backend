@@ -32,6 +32,25 @@ const tarjetaModel = {
                 callback(null);
             }
         );
+    },
+    obtenerTarjetas(callback) {
+        const query = `
+            SELECT 
+                u.nombre_usuario, 
+                t.id_tarjeta, 
+                t.numero_tarjeta, 
+                t.intentos_fallidos, 
+                t.estado 
+            FROM 
+                tarjetas_credito t 
+            JOIN 
+                usuarios u ON t.id_usuario = u.id_usuario
+        `;
+
+        db.query(query, (err, results) => {
+            if (err) return callback(err);
+            callback(null, results);
+        });
     }
 };
 

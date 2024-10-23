@@ -49,6 +49,17 @@ const saldoController = {
                 });
             });
         });
+    },
+    
+    obtenerTarjetas(req, res) {
+        tarjetaModel.obtenerTarjetas((err, tarjetas) => {
+            if (err) {
+                console.error('Error al obtener tarjetas:', err);
+                return res.status(500).json({ error: 'Error al obtener las tarjetas' });
+            }
+
+            res.status(200).json(tarjetas);
+        });
     }
 };
 
