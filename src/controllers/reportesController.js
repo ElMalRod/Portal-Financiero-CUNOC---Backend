@@ -15,7 +15,6 @@ const reportesController = {
         });
     },
 
-
     obtenerCuentasBloqueadas: function(req, res) {
         reportesModel.obtenerCuentasBloqueadas((err, result) => {
             if (err) {

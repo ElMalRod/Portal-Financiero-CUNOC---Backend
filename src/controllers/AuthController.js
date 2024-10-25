@@ -36,7 +36,6 @@ const AuthController = {
         });
     },
 
-
     sendPinReminder: async (req, res) => {
         const { correo } = req.body;
 
