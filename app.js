@@ -11,6 +11,7 @@ const cuentaRoutes = require('./src/routes/cuentaRoutes');
 const tipoCambioRoutes = require('./src/routes/tipoCambioRoutes');
 const saldoRoutes = require('./src/routes/saldoRoutes');
 const reportesRoutes = require('./src/routes/reportesRoutes');
+const faqRoutes = require('./src/routes/faqRoutes');
 const cors = require('cors'); // Importa cors
 
 app.use(cors());
@@ -35,6 +36,7 @@ connection.connect((err) => {
     app.use('/api/tipo-cambio', tipoCambioRoutes);
     app.use('/api/saldo', saldoRoutes);
     app.use('/api/reportes', reportesRoutes);
+    app.use('/api/faq', faqRoutes);
     // Ruta básica
     app.get('/', (req, res) => {
         res.send('¡Hola Mundo desde Node.js y Express!');

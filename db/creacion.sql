@@ -157,4 +157,29 @@ ADD FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario);
 -- Cambios en la estructura de la base de datos ROl
 ALTER TABLE usuarios ADD COLUMN rol ENUM('cliente', 'admin') NOT NULL DEFAULT 'cliente';
 
+-- Crear la tabla de preguntas frecuentes
+CREATE TABLE FAQ (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    pregunta VARCHAR(255) NOT NULL,
+    respuesta TEXT NOT NULL
+);
 
+-- Insertar preguntas y respuestas en la tabla FAQ
+INSERT INTO FAQ (pregunta, respuesta) VALUES
+('¿Cómo puedo crear una cuenta en el portal?', 'Actualmente, no puedes crear nuevas cuentas en el portal, pero puedes solicitar el "recordatorio de PIN" para acceder a tu cuenta existente.'),
+('¿Qué hago si olvido mi PIN?', 'Puedes utilizar la opción de "recordatorio de PIN", que enviará tu PIN a la dirección de correo electrónico asociada a tu cuenta.'),
+('¿Puedo cambiar mi PIN?', 'Sí, puedes cambiar tu PIN comunicandote con soporte.'),
+('¿Cómo puedo dejar un comentario sobre mi experiencia?', 'Debes estar conectado a tu cuenta. Una vez dentro, encontrarás la opción para dejar un comentario sobre los beneficios de tu tarjeta de crédito.'),
+('¿Qué tipos de cuentas están disponibles?', 'Hay dos tipos de cuentas disponibles: normal (en quetzales) y gold (en dólares).'),
+('¿Cómo se determina el límite de crédito de mi tarjeta?', 'El límite de crédito varía según el tipo de cuenta. Las cuentas normales tienen un límite de Q3000.00 y las cuentas gold tienen un límite de $1000.00.'),
+('¿Qué sucede si mi tarjeta es rechazada varias veces?', 'Si tu tarjeta es rechazada tres veces, quedará bloqueada automáticamente.'),
+('¿Qué debo hacer si mi tarjeta fue robada o extraviada?', 'Si tu tarjeta fue robada o extraviada, debes deshabilitarla inmediatamente y crear un registro indicando el motivo de la deshabilitación.'),
+('¿Cómo se calcula el saldo a pagar de mi cuenta?', 'Cada vez que utilizas tu tarjeta, se aplicará un cobro adicional del 0.25% sobre el monto total, además de los cargos regulares.'),
+('¿Puedo ajustar el límite de crédito de mi tarjeta?', 'Sí, puedes solicitar un ajuste del límite de crédito, pero está sujeto a aprobación por parte del banco.'),
+('¿Cómo puedo revisar el historial de mis movimientos?', 'Puedes revisar tus movimientos accediendo a la sección de "Movimientos" en tu cuenta, donde se mostrará un reporte detallado.'),
+('¿Qué hacer si deseo cerrar mi cuenta?', 'Si deseas cerrar tu cuenta, debes proporcionar un motivo y seguir el procedimiento establecido en la sección de administración.'),
+('¿Puedo habilitar o deshabilitar mi tarjeta temporalmente?', 'Sí, puedes habilitar o deshabilitar tu tarjeta en caso de situaciones como robo o extravío.'),
+('¿Qué información debo proporcionar para habilitar mi tarjeta?', 'Necesitarás proporcionar tu número de tarjeta y el motivo por el cual deseas habilitarla.'),
+('¿Existen cargos por abrir una cuenta?', 'No, no se realizarán cargos por abrir una cuenta; el saldo inicial será cero.'),
+('¿Cómo se actualiza el tipo de cambio en el sistema?', 'El tipo de cambio puede ser ajustado por el administrador en la sección correspondiente del portal.'),
+('¿Qué debo hacer si tengo problemas con el acceso al portal?', 'Si tienes problemas para acceder al portal, verifica tu conexión a Internet y asegúrate de que estás utilizando el correo electrónico y PIN correctos. Si el problema persiste, contacta al soporte técnico.');
