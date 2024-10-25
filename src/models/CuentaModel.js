@@ -153,7 +153,7 @@ const CuentaModel = {
             }
 
             // Si el estado es 'deshabilitada', registrar el motivo en la tabla 'deshabilitaciones'
-            if (estado === 'deshabilitada') {
+            if (estado === 'deshabilitada' || estado === 'bloqueada') {
                 const queryInsertDeshabilitacion = `
                     INSERT INTO deshabilitaciones (id_tarjeta, motivo)
                     VALUES (?, ?)

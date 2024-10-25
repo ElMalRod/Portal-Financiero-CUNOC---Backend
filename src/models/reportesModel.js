@@ -2,7 +2,7 @@
 const db = require('../config/dbConnection');
 
 const reportesModel = {
-    obtenerMovimientos: function(fecha, callback) {
+    obtenerMovimientos: function(fechaInicio, fechaFin, callback) {
         const sql = `
             SELECT 
                 m.fecha_movimiento, 
@@ -14,11 +14,11 @@ const reportesModel = {
             JOIN 
                 tarjetas_credito t ON m.id_tarjeta = t.id_tarjeta
             WHERE 
-                m.fecha_movimiento <= ?`;
+                m.fecha_movimiento BETWEEN ? AND ?`;
         
-        db.query(sql, [fecha], callback);
+        db.query(sql, [fechaInicio, fechaFin], callback);
     },
-
+    
     obtenerCuentasBloqueadas: function(callback) {
         const sql = `
             SELECT 

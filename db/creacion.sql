@@ -156,3 +156,5 @@ ADD FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario);
 
 -- Cambios en la estructura de la base de datos ROl
 ALTER TABLE usuarios ADD COLUMN rol ENUM('cliente', 'admin') NOT NULL DEFAULT 'cliente';
+
+

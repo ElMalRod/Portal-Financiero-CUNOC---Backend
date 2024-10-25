@@ -2,15 +2,19 @@
 const reportesModel = require('../models/reportesModel');
 
 const reportesController = {
+
     obtenerMovimientos: function(req, res) {
-        const fecha = req.query.fecha || '2024-12-31'; // Se puede especificar una fecha a través de la query
-        reportesModel.obtenerMovimientos(fecha, (err, result) => {
+        const fechaInicio = req.query.fechaInicio || '2024-01-01'; // Fecha de inicio por defecto
+        const fechaFin = req.query.fechaFin || '2024-12-31'; // Fecha de fin por defecto
+        
+        reportesModel.obtenerMovimientos(fechaInicio, fechaFin, (err, result) => {
             if (err) {
                 return res.status(500).json({ error: 'Error al obtener movimientos' });
             }
             res.status(200).json(result);
         });
     },
+
 
     obtenerCuentasBloqueadas: function(req, res) {
         reportesModel.obtenerCuentasBloqueadas((err, result) => {
