@@ -35,18 +35,70 @@ const CuentaModel = {
 
     // Crear una nueva cuenta (tarjeta de crédito)
     crearCuenta: (nombre_usuario, id_usuario, id_tipo_cuenta, numero_tarjeta, callback) => {
-        const query = `
-            INSERT INTO tarjetas_credito (numero_tarjeta, id_usuario, id_tipo_cuenta, limite_credito)
-            VALUES (?, ?, ?, (SELECT limite_credito FROM tipos_cuenta WHERE id_tipo_cuenta = ?))
+        // Consultar tipo de cambio si es cuenta "gold"
+        const queryTipoCuenta = `
+            SELECT limite_credito, moneda
+            FROM tipos_cuenta
+            WHERE id_tipo_cuenta = ?
         `;
-        db.query(query, [numero_tarjeta, id_usuario, id_tipo_cuenta, id_tipo_cuenta], (err, result) => {
+
+        db.query(queryTipoCuenta, [id_tipo_cuenta], (err, results) => {
             if (err) {
-                console.error('Error al crear la cuenta:', err);
+                console.error('Error al consultar tipo de cuenta:', err);
                 return callback(err);
             }
-            callback(null, result);
+
+            if (results.length === 0) {
+                return callback(new Error('Tipo de cuenta no encontrado'));
+            }
+
+            const { limite_credito, moneda } = results[0];
+
+            // Verificar si es cuenta en dólares y obtener el tipo de cambio
+            if (moneda === 'Dólares') {
+                const queryTipoCambio = `SELECT valor_cambio FROM tipo_cambio ORDER BY fecha_cambio DESC LIMIT 1`;
+                
+                db.query(queryTipoCambio, (err, cambioResults) => {
+                    if (err) {
+                        console.error('Error al consultar tipo de cambio:', err);
+                        return callback(err);
+                    }
+
+                    const tipoCambio = cambioResults[0]?.valor_cambio || 7.5; // Valor predeterminado
+
+                    // Convertir límite de crédito de dólares a quetzales
+                    const limiteCreditoEnQuetzales = limite_credito * tipoCambio;
+
+                    // Insertar la tarjeta con el límite convertido a quetzales
+                    const insertQuery = `
+                        INSERT INTO tarjetas_credito (numero_tarjeta, id_usuario, id_tipo_cuenta, limite_credito)
+                        VALUES (?, ?, ?, ?)
+                    `;
+                    db.query(insertQuery, [numero_tarjeta, id_usuario, id_tipo_cuenta, limiteCreditoEnQuetzales], (err, result) => {
+                        if (err) {
+                            console.error('Error al crear la cuenta:', err);
+                            return callback(err);
+                        }
+                        callback(null, result);
+                    });
+                });
+            } else {
+                // Insertar la tarjeta sin conversión si es en quetzales
+                const insertQuery = `
+                    INSERT INTO tarjetas_credito (numero_tarjeta, id_usuario, id_tipo_cuenta, limite_credito)
+                    VALUES (?, ?, ?, ?)
+                `;
+                db.query(insertQuery, [numero_tarjeta, id_usuario, id_tipo_cuenta, limite_credito], (err, result) => {
+                    if (err) {
+                        console.error('Error al crear la cuenta:', err);
+                        return callback(err);
+                    }
+                    callback(null, result);
+                });
+            }
         });
     },
+
      
     // Eliminar una cuenta por id_usuario y registrar motivo
     eliminarCuenta: (id_usuario, motivo_cierre, callback) => {

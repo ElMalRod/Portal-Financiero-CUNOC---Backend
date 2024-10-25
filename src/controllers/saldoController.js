@@ -70,7 +70,7 @@ const saldoController = {
             res.status(200).json(tarjetas);
         });
     },
-    // Función para agregar saldo a la tarjeta
+
     agregarSaldo(req, res) {
         const { numeroTarjeta, monto } = req.body;
 
@@ -86,9 +86,7 @@ const saldoController = {
 
             return res.status(200).json({ message: mensaje });
         });
-},
-
-
+    },
 
 };
 
