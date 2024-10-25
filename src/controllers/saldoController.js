@@ -69,7 +69,27 @@ const saldoController = {
 
             res.status(200).json(tarjetas);
         });
-    }
+    },
+    // Función para agregar saldo a la tarjeta
+    agregarSaldo(req, res) {
+        const { numeroTarjeta, monto } = req.body;
+
+        if (!numeroTarjeta || !monto) {
+            return res.status(400).json({ error: 'Número de tarjeta y monto son requeridos' });
+        }
+
+        tarjetaModel.agregarSaldo(numeroTarjeta, monto, (err, mensaje) => {
+            if (err) {
+                console.error('Error al agregar saldo:', err);
+                return res.status(500).json({ error: 'Error al agregar saldo' });
+            }
+
+            return res.status(200).json({ message: mensaje });
+        });
+},
+
+
+
 };
 
 module.exports = saldoController;

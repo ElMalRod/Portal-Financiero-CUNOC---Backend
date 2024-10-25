@@ -79,7 +79,6 @@ const tarjetaModel = {
     },
     
     
-
     reducirSaldo(numeroTarjeta, nuevoSaldo, callback) {
         db.query(
             'UPDATE tarjetas_credito SET saldo_actual = ? WHERE numero_tarjeta = ?',
@@ -119,7 +118,64 @@ const tarjetaModel = {
             if (err) return callback(err);
             callback(null, results);
         });
-    }
+    },
+
+ agregarSaldo(numeroTarjeta, monto, callback) {
+    // Verificar que el monto a agregar sea positivo
+    if (monto <= 0) return callback(new Error('El monto a agregar debe ser positivo'));
+
+    // Buscar la tarjeta directamente en esta función
+    db.query(
+        `SELECT 
+            t.id_tarjeta, 
+            t.saldo_actual 
+         FROM tarjetas_credito t
+         WHERE t.numero_tarjeta = ? AND t.estado = 'activa'`,
+        [numeroTarjeta],
+        (err, results) => {
+            if (err) return callback(err);
+            if (results.length === 0) return callback(new Error('Tarjeta no encontrada o no activa'));
+
+            // Asegurarse de que el saldo actual es un número
+            const tarjeta = results[0];
+            const saldoActual = parseFloat(tarjeta.saldo_actual); // Asegúrate de que sea un número
+            const nuevoSaldo = saldoActual + monto; // Aquí se permite que el saldo sea negativo
+
+            // Actualizar el saldo en la base de datos
+            db.query(
+                'UPDATE tarjetas_credito SET saldo_actual = ? WHERE numero_tarjeta = ?',
+                [nuevoSaldo, numeroTarjeta],
+                (err) => {
+                    if (err) return callback(err);
+
+                    // Registrar el movimiento
+                    registrarMovimiento(tarjeta.id_tarjeta, 'aumento', monto, (err) => {
+                        if (err) return callback(err);
+                        callback(null, `Saldo actualizado a ${nuevoSaldo.toFixed(2)}`); // Formato con 2 decimales
+                    });
+                }
+            );
+        }
+    );
+},
+
+
 };
+
+
+
+
+function registrarMovimiento(idTarjeta, tipoMovimiento, monto, callback) {
+    // Aquí se debe implementar la lógica para registrar el movimiento en la base de datos.
+    db.query(
+        'INSERT INTO movimientos (id_tarjeta, tipo_movimiento, monto) VALUES (?, ?, ?)',
+        [idTarjeta, tipoMovimiento, monto],
+        (err) => {
+            if (err) return callback(err);
+            callback(null); // Llama al callback sin error si la inserción fue exitosa
+        }
+    );
+}
+
 
 module.exports = tarjetaModel;
