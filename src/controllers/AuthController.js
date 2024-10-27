@@ -31,6 +31,7 @@ const AuthController = {
                     correo: user.correo,
                     notifyme: user.notifyme,
                     rol: user.rol,
+                    numeros_tarjetas: user.numeros_tarjetas, // Agregar números de tarjetas
                 },
             });
         });

@@ -1,8 +1,7 @@
-// src/models/MovimientoModel.js
 const db = require('../config/dbConnection');
 
 const MovimientoModel = {
-    obtenerReporteMovimientos: (id_usuario, callback) => {
+    obtenerReporteMovimientos: (id_usuario, numero_tarjeta, callback) => {
         const query = `
             SELECT 
                 t.numero_tarjeta, 
@@ -16,12 +15,12 @@ const MovimientoModel = {
             LEFT JOIN 
                 usuarios u ON t.id_usuario = u.id_usuario
             WHERE 
-                u.id_usuario = ? 
+                u.id_usuario = ? AND t.numero_tarjeta = ? 
             ORDER BY 
                 m.fecha_movimiento DESC
         `;
 
-        db.query(query, [id_usuario], (err, results) => {
+        db.query(query, [id_usuario, numero_tarjeta], (err, results) => {
             if (err) {
                 return callback(err, null);
             }

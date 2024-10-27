@@ -98,8 +98,7 @@ const CuentaModel = {
             }
         });
     },
-
-     
+ 
     // Eliminar una cuenta por id_usuario y registrar motivo
     eliminarCuenta: (id_usuario, motivo_cierre, callback) => {
         console.log('Eliminando cuenta para id_usuario:', id_usuario, 'con motivo de cierre:', motivo_cierre);

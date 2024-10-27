@@ -3,59 +3,59 @@ const CuentaModel = require('../models/CuentaModel');
     const generarPinAleatorio = () => {
         return Math.floor(1000 + Math.random() * 9000); // Genera un número aleatorio entre 1000 y 9999
     };
-const CuentaController = {
-
-
-    // Crear una nueva cuenta
-    crearCuenta: (req, res) => {
-        const { nombre_usuario, tipo_cuenta, numero_tarjeta, notify = false, rol } = req.body; // Extraer notify y rol del cuerpo de la solicitud
-
-        // Validar el tipo de cuenta
-        if (!['normal', 'gold'].includes(tipo_cuenta)) {
-            return res.status(400).json({ error: 'Tipo de cuenta no válido. Debe ser "normal" o "gold".' });
-        }
-
-        // Validar el rol
-        if (!['cliente', 'admin'].includes(rol)) {
-            return res.status(400).json({ error: 'Rol no válido. Debe ser "cliente" o "admin".' });
-        }
-
-        // Obtener la información del tipo de cuenta
-        CuentaModel.obtenerTipoCuenta(tipo_cuenta, (err, tipoCuenta) => {
-            if (err || !tipoCuenta) {
-                return res.status(500).json({ error: 'Error al obtener tipo de cuenta' });
+    
+    const CuentaController = {
+        // Crear una nueva cuenta (tarjeta de crédito) para un usuario existente o nuevo
+        crearCuenta: (req, res) => {
+            const { nombre_usuario, tipo_cuenta, numero_tarjeta, notify = false, rol } = req.body;
+    
+            // Validar el tipo de cuenta
+            if (!['normal', 'gold'].includes(tipo_cuenta)) {
+                return res.status(400).json({ error: 'Tipo de cuenta no válido. Debe ser "normal" o "gold".' });
             }
-
+    
+            // Validar el rol
+            if (!['cliente', 'admin'].includes(rol)) {
+                return res.status(400).json({ error: 'Rol no válido. Debe ser "cliente" o "admin".' });
+            }
+    
             // Formatear el nombre de usuario y crear el correo
             const nombreUsuarioFormateado = nombre_usuario.replace(/\s+/g, '').toLowerCase();
             const correo = `${nombreUsuarioFormateado}.${tipo_cuenta}@${numero_tarjeta}.com`;
-
+    
             // Generar un pin aleatorio de 4 dígitos
             const pin = generarPinAleatorio();
-
+    
             // Verificar si el usuario ya existe
             CuentaModel.verificarUsuario(nombre_usuario, (err, usuarioExistente) => {
                 if (err) {
                     return res.status(500).json({ error: 'Error al verificar el usuario' });
                 }
-
-                // Callback para crear la cuenta una vez tengamos el ID del usuario
+    
                 const id_usuario_callback = (usuarioId) => {
-                    CuentaModel.crearCuenta(nombre_usuario, usuarioId, tipoCuenta.id_tipo_cuenta, numero_tarjeta, (err, result) => {
-                        if (err) {
-                            console.error('Error al crear la cuenta:', err);
-                            return res.status(500).json({ error: 'Error al crear la cuenta' });
+                    // Obtener la información del tipo de cuenta
+                    CuentaModel.obtenerTipoCuenta(tipo_cuenta, (err, tipoCuenta) => {
+                        if (err || !tipoCuenta) {
+                            return res.status(500).json({ error: 'Error al obtener tipo de cuenta' });
                         }
-                        res.status(201).json({ 
-                            message: 'Cuenta creada exitosamente', 
-                            correo: correo,
-                            pin: pin 
+    
+                        // Crear la cuenta (tarjeta de crédito) asociada al usuario
+                        CuentaModel.crearCuenta(nombre_usuario, usuarioId, tipoCuenta.id_tipo_cuenta, numero_tarjeta, (err, result) => {
+                            if (err) {
+                                console.error('Error al crear la cuenta:', err);
+                                return res.status(500).json({ error: 'Error al crear la cuenta' });
+                            }
+                            res.status(201).json({ 
+                                message: 'Cuenta creada exitosamente', 
+                                correo: correo,
+                                pin: pin 
+                            });
                         });
                     });
                 };
-
-                // Si el usuario no existe, crear un nuevo usuario
+    
                 if (!usuarioExistente) {
+                    // Si el usuario no existe, crearlo primero
                     CuentaModel.crearUsuario(nombre_usuario, correo, pin, notify, rol, (err, usuarioId) => {
                         if (err) {
                             console.error('Error al crear el usuario:', err);
@@ -68,9 +68,7 @@ const CuentaController = {
                     id_usuario_callback(usuarioExistente.id_usuario);
                 }
             });
-        });
-    },
-
+        },
     // Eliminar una cuenta por idUsuario
     eliminarCuenta: (req, res) => {
         const { id_usuario, motivo_cierre } = req.body;

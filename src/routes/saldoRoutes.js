@@ -7,4 +7,6 @@ const saldoController = require('../controllers/saldoController');
 router.post('/reducir-saldo', saldoController.reducirSaldo);
 router.get('/obtener-tarjetas', saldoController.obtenerTarjetas);
 router.post('/agregar-saldo', saldoController.agregarSaldo);
+router.post('/vincular-tarjeta', saldoController.vincularTarjeta);
+router.get('/obtener-vinculadas', saldoController.obtenerTarjetasVinculadas);
 module.exports = router;

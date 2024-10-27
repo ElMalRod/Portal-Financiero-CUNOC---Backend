@@ -157,6 +157,11 @@ ADD FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario);
 -- Cambios en la estructura de la base de datos ROl
 ALTER TABLE usuarios ADD COLUMN rol ENUM('cliente', 'admin') NOT NULL DEFAULT 'cliente';
 
+-- Cambios en la estructura de la base de datos vinculada
+ALTER TABLE tarjetas_credito
+ADD COLUMN vinculada BOOLEAN DEFAULT FALSE;
+
+
 -- Crear la tabla de preguntas frecuentes
 CREATE TABLE FAQ (
     id INT AUTO_INCREMENT PRIMARY KEY,

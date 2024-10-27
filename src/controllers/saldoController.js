@@ -88,6 +88,36 @@ const saldoController = {
         });
     },
 
+    vincularTarjeta(req, res) {
+        const { numeroTarjeta, nombreUsuario, pin } = req.body;
+    
+        if (!numeroTarjeta || !nombreUsuario || !pin) {
+            return res.status(400).json({ error: 'El número de tarjeta, nombre de usuario y PIN son requeridos' });
+        }
+    
+        tarjetaModel.vincularTarjeta(numeroTarjeta, nombreUsuario, pin, (err, mensaje) => {
+            if (err) {
+                console.error('Error al vincular la tarjeta:', err);
+                return res.status(500).json({ error: err.message });
+            }
+    
+            return res.status(200).json({ message: mensaje });
+        });
+    },
+
+    
+    obtenerTarjetasVinculadas(req, res) {
+        tarjetaModel.obtenerTarjetasVinculadas((err, tarjetas) => {
+            if (err) {
+                console.error('Error al obtener tarjetas vinculadas:', err);
+                return res.status(500).json({ error: 'Error al obtener las tarjetas vinculadas' });
+            }
+
+            res.status(200).json(tarjetas);
+        });
+    }
+    
+
 };
 
 module.exports = saldoController;
