@@ -1,4 +1,7 @@
 const tarjetaModel = require('../models/tarjetaModel');
+const sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+require('dotenv').config();
 
 const saldoController = {
     reducirSaldo(req, res) {
@@ -47,14 +50,32 @@ const saldoController = {
                     return res.status(500).json({ error: 'Error al reducir el saldo' });
                 }
     
-                // Registrar el movimiento
                 tarjetaModel.registrarMovimiento(numeroTarjeta, montoReducir, (err) => {
                     if (err) {
                         console.error('Error al registrar el movimiento:', err);
                         return res.status(500).json({ error: 'Error al registrar el movimiento' });
                     }
     
-                    return res.status(200).json({ message: 'Saldo reducido exitosamente', nuevoSaldo });
+                    // Enviar correo si notifyme está activado
+                    tarjetaModel.obtenerCorreoYNotificacion(numeroTarjeta, (err, usuario) => {
+                        if (err) {
+                            console.error('Error al obtener usuario:', err);
+                            return res.status(500).json({ error: 'Error al obtener usuario' });
+                        }
+    
+                        if (usuario.notifyme) {
+                            enviarCorreoMovimiento(usuario.correo, 'reducción', montoReducir, numeroTarjeta)
+                                .then(() => {
+                                    res.status(200).json({ message: 'Saldo reducido y notificación enviada', nuevoSaldo });
+                                })
+                                .catch((error) => {
+                                    console.error('Error al enviar correo:', error);
+                                    res.status(500).json({ error: 'Saldo reducido pero fallo en el envío de correo' });
+                                });
+                        } else {
+                            res.status(200).json({ message: 'Saldo reducido exitosamente', nuevoSaldo });
+                        }
+                    });
                 });
             });
         });
@@ -84,7 +105,27 @@ const saldoController = {
                 return res.status(500).json({ error: 'Error al agregar saldo' });
             }
 
-            return res.status(200).json({ message: mensaje });
+            // Obtener el correo y la preferencia de notificación del usuario
+            tarjetaModel.obtenerCorreoYNotificacion(numeroTarjeta, (err, usuario) => {
+                if (err) {
+                    console.error('Error al obtener usuario:', err);
+                    return res.status(500).json({ error: 'Error al obtener usuario' });
+                }
+
+                if (usuario.notifyme) {
+                    // Enviar correo de notificación
+                    enviarCorreoMovimiento(usuario.correo, 'aumento', monto, numeroTarjeta)
+                        .then(() => {
+                            res.status(200).json({ message: `${mensaje} y notificación enviada` });
+                        })
+                        .catch((error) => {
+                            console.error('Error al enviar correo:', error);
+                            res.status(500).json({ error: `${mensaje} pero fallo en el envío de correo` });
+                        });
+                } else {
+                    res.status(200).json({ message: mensaje });
+                }
+            });
         });
     },
 
@@ -131,9 +172,22 @@ const saldoController = {
     
             return res.status(200).json({ message: mensaje });
         });
-    }
-    
+    },
 
 };
+
+
+function enviarCorreoMovimiento(correo, tipoMovimiento, monto, numeroTarjeta) {
+    const mensaje = {
+        to: correo,
+        from: process.env.EMAIL_USER,
+        subject: `Notificación de ${tipoMovimiento} en tu tarjeta`,
+        text: `Se ha realizado un ${tipoMovimiento} de ${monto} en tu cuenta para la tarjeta ${numeroTarjeta}.`,
+    };
+
+    return sgMail.send(mensaje);
+}
+
+
 
 module.exports = saldoController;

@@ -1,7 +1,7 @@
 const db = require('../config/dbConnection');
 
 const tarjetaModel = {
-    
+
     getSaldo(numeroTarjeta, callback) {
         db.query(
             'SELECT saldo_actual, limite_credito FROM tarjetas_credito WHERE numero_tarjeta = ? AND estado = "activa" AND vinculada = true',
@@ -261,6 +261,21 @@ const tarjetaModel = {
         );
     },
     
+    obtenerCorreoYNotificacion(numeroTarjeta, callback) {
+        db.query(
+            `SELECT u.correo, u.notifyme 
+             FROM usuarios u
+             JOIN tarjetas_credito t ON u.id_usuario = t.id_usuario
+             WHERE t.numero_tarjeta = ?`,
+            [numeroTarjeta],
+            (err, results) => {
+                if (err) return callback(err);
+                if (results.length === 0) return callback(new Error('Usuario no encontrado'));
+                callback(null, results[0]);
+            }
+        );
+    }
+    
 
 
 };
@@ -269,7 +284,7 @@ const tarjetaModel = {
 
 
 function registrarMovimiento(idTarjeta, tipoMovimiento, monto, callback) {
-    // Aquí se debe implementar la lógica para registrar el movimiento en la base de datos.
+
     db.query(
         'INSERT INTO movimientos (id_tarjeta, tipo_movimiento, monto) VALUES (?, ?, ?)',
         [idTarjeta, tipoMovimiento, monto],
