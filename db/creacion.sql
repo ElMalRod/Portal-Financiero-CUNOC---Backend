@@ -79,46 +79,6 @@ CREATE TABLE tipo_cambio (
     fecha_cambio TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Datos iniciales para tipos de cuenta
-INSERT INTO tipos_cuenta (nombre_tipo, moneda, limite_credito) VALUES 
-('normal', 'Quetzales', 3000.00),
-('gold', 'Dólares', 1000.00);
-
--- Insertar un valor inicial en la tabla tipo_cambio
-INSERT INTO tipo_cambio (valor_cambio) VALUES (7.50);
-
--- Datos iniciales de usuarios
-INSERT INTO usuarios (nombre_usuario, correo, pin, notifyme) VALUES
-('juanperez', 'juan.perez@gmail.com', '1234', TRUE),
-('mariagonzalez', 'maria.gonzalez@gmail.com', '4321', FALSE),
-('pedroramirez', 'pedro.ramirez@gmail.com', '5678', TRUE),
-('analopez', 'ana.lopez@gmail.com', '8765', FALSE),
-('luismartinez', 'luis.martinez@gmail.com', '9876', TRUE);
-
--- Datos iniciales de tarjetas de crédito asociadas a los usuarios
-INSERT INTO tarjetas_credito (numero_tarjeta, id_usuario, id_tipo_cuenta, saldo_actual, limite_credito, estado) VALUES
-('1234567890123456', 1, 1, 1500.00, 3000.00, 'activa'), -- Juan Pérez cuenta normal
-('2345678901234567', 2, 2, 500.00, 1000.00, 'activa'), -- Maria González cuenta gold
-('3456789012345678', 3, 1, 2000.00, 3000.00, 'bloqueada'), -- Pedro Ramírez cuenta normal bloqueada
-('4567890123456789', 4, 2, 1000.00, 1000.00, 'activa'), -- Ana López cuenta gold
-('5678901234567890', 5, 1, 2500.00, 3000.00, 'deshabilitada'); -- Luis Martínez cuenta normal deshabilitada
-
--- Datos iniciales de movimientos
-INSERT INTO movimientos (id_tarjeta, tipo_movimiento, monto) VALUES
-(1, 'aumento', 500.00), -- Juan Pérez
-(2, 'reduccion', 200.00), -- Maria González
-(3, 'aumento', 1000.00), -- Pedro Ramírez
-(4, 'aumento', 100.00), -- Ana López
-(5, 'reduccion', 500.00); -- Luis Martínez
-
--- Datos iniciales de comentarios
-INSERT INTO comentarios (id_usuario, comentario) VALUES
-(1, 'He recibido muchos beneficios por usar mi tarjeta de crédito.'), -- Juan Pérez
-(2, 'La tarjeta gold me ha permitido hacer compras internacionales fácilmente.'), -- Maria González
-(3, 'Me bloquearon la tarjeta después de tres intentos fallidos.'), -- Pedro Ramírez
-(4, 'Excelente servicio al cliente con mi tarjeta gold.'), -- Ana López
-(5, 'Deshabilitaron mi tarjeta debido a una deuda no pagada.'); -- Luis Martínez
-
 -- Consultas útiles
 
 -- Reporte de movimientos de una cuenta
@@ -188,3 +148,44 @@ INSERT INTO FAQ (pregunta, respuesta) VALUES
 ('¿Existen cargos por abrir una cuenta?', 'No, no se realizarán cargos por abrir una cuenta; el saldo inicial será cero.'),
 ('¿Cómo se actualiza el tipo de cambio en el sistema?', 'El tipo de cambio puede ser ajustado por el administrador en la sección correspondiente del portal.'),
 ('¿Qué debo hacer si tengo problemas con el acceso al portal?', 'Si tienes problemas para acceder al portal, verifica tu conexión a Internet y asegúrate de que estás utilizando el correo electrónico y PIN correctos. Si el problema persiste, contacta al soporte técnico.');
+
+
+-- Datos iniciales para tipos de cuenta
+INSERT INTO tipos_cuenta (nombre_tipo, moneda, limite_credito) VALUES 
+('normal', 'Quetzales', 3000.00),
+('gold', 'Dólares', 1000.00);
+
+-- Insertar un valor inicial en la tabla tipo_cambio
+INSERT INTO tipo_cambio (valor_cambio) VALUES (7.50);
+
+-- Datos iniciales de usuarios
+INSERT INTO usuarios (nombre_usuario, correo, pin, notifyme) VALUES
+('juanperez', 'juan.perez@gmail.com', '1234', TRUE),
+('mariagonzalez', 'maria.gonzalez@gmail.com', '4321', FALSE),
+('pedroramirez', 'pedro.ramirez@gmail.com', '5678', TRUE),
+('analopez', 'ana.lopez@gmail.com', '8765', FALSE),
+('luismartinez', 'luis.martinez@gmail.com', '9876', TRUE);
+
+-- Datos iniciales de tarjetas de crédito asociadas a los usuarios
+INSERT INTO tarjetas_credito (numero_tarjeta, id_usuario, id_tipo_cuenta, saldo_actual, limite_credito, estado) VALUES
+('1234567890123456', 1, 1, 1500.00, 3000.00, 'activa'), -- Juan Pérez cuenta normal
+('2345678901234567', 2, 2, 500.00, 1000.00, 'activa'), -- Maria González cuenta gold
+('3456789012345678', 3, 1, 2000.00, 3000.00, 'bloqueada'), -- Pedro Ramírez cuenta normal bloqueada
+('4567890123456789', 4, 2, 1000.00, 1000.00, 'activa'), -- Ana López cuenta gold
+('5678901234567890', 5, 1, 2500.00, 3000.00, 'deshabilitada'); -- Luis Martínez cuenta normal deshabilitada
+
+-- Datos iniciales de movimientos
+INSERT INTO movimientos (id_tarjeta, tipo_movimiento, monto) VALUES
+(1, 'aumento', 500.00), -- Juan Pérez
+(2, 'reduccion', 200.00), -- Maria González
+(3, 'aumento', 1000.00), -- Pedro Ramírez
+(4, 'aumento', 100.00), -- Ana López
+(5, 'reduccion', 500.00); -- Luis Martínez
+
+-- Datos iniciales de comentarios
+INSERT INTO comentarios (id_usuario, comentario) VALUES
+(1, 'He recibido muchos beneficios por usar mi tarjeta de crédito.'), -- Juan Pérez
+(2, 'La tarjeta gold me ha permitido hacer compras internacionales fácilmente.'), -- Maria González
+(3, 'Me bloquearon la tarjeta después de tres intentos fallidos.'), -- Pedro Ramírez
+(4, 'Excelente servicio al cliente con mi tarjeta gold.'), -- Ana López
+(5, 'Deshabilitaron mi tarjeta debido a una deuda no pagada.'); -- Luis Martínez
