@@ -105,7 +105,6 @@ const saldoController = {
         });
     },
 
-    
     obtenerTarjetasVinculadas(req, res) {
         tarjetaModel.obtenerTarjetasVinculadas((err, tarjetas) => {
             if (err) {
@@ -114,6 +113,23 @@ const saldoController = {
             }
 
             res.status(200).json(tarjetas);
+        });
+    },
+
+    desvincularTarjeta(req, res) {
+        const { numeroTarjeta, nombreUsuario, correo } = req.body;
+    
+        if (!numeroTarjeta || !nombreUsuario || !correo) {
+            return res.status(400).json({ error: 'El número de tarjeta, nombre de usuario y correo son requeridos' });
+        }
+    
+        tarjetaModel.desvincularTarjeta(numeroTarjeta, nombreUsuario, correo, (err, mensaje) => {
+            if (err) {
+                console.error('Error al desvincular la tarjeta:', err);
+                return res.status(500).json({ error: err.message });
+            }
+    
+            return res.status(200).json({ message: mensaje });
         });
     }
     

@@ -69,6 +69,7 @@ const CuentaModel = require('../models/CuentaModel');
                 }
             });
         },
+        
     // Eliminar una cuenta por idUsuario
     eliminarCuenta: (req, res) => {
         const { id_usuario, motivo_cierre } = req.body;

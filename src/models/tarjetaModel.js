@@ -1,9 +1,10 @@
 const db = require('../config/dbConnection');
 
 const tarjetaModel = {
+    
     getSaldo(numeroTarjeta, callback) {
         db.query(
-            'SELECT saldo_actual, limite_credito FROM tarjetas_credito WHERE numero_tarjeta = ? AND estado = "activa"',
+            'SELECT saldo_actual, limite_credito FROM tarjetas_credito WHERE numero_tarjeta = ? AND estado = "activa" AND vinculada = true',
             [numeroTarjeta],
             (err, results) => {
                 if (err) return callback(err);
@@ -11,7 +12,7 @@ const tarjetaModel = {
             }
         );
     },
-
+    
     incrementarIntentosFallidos(numeroTarjeta, callback) {
         // Primero, incrementa los intentos fallidos
         db.query(
@@ -201,10 +202,10 @@ const tarjetaModel = {
     obtenerTarjetasVinculadas(callback) {
         // Consulta para obtener tarjetas vinculadas junto con el nombre del usuario
         db.query(
-            `SELECT t.numero_tarjeta, u.nombre_usuario
-             FROM tarjetas_credito t
-             JOIN usuarios u ON t.id_usuario = u.id_usuario
-             WHERE t.vinculada = TRUE`,
+            `SELECT t.numero_tarjeta, u.nombre_usuario, u.correo
+            FROM tarjetas_credito t
+            JOIN usuarios u ON t.id_usuario = u.id_usuario
+            WHERE t.vinculada = TRUE`,
             (err, results) => {
                 if (err) return callback(err);
     
@@ -215,6 +216,47 @@ const tarjetaModel = {
     
                 // Devuelve los resultados encontrados
                 callback(null, results);
+            }
+        );
+    },
+
+    desvincularTarjeta(numeroTarjeta, nombreUsuario, correo, callback) {
+        // Verifica que la tarjeta esté vinculada con el usuario indicado
+        db.query(
+            `SELECT t.numero_tarjeta 
+             FROM tarjetas_credito t 
+             JOIN usuarios u ON t.id_usuario = u.id_usuario 
+             WHERE t.numero_tarjeta = ? AND u.nombre_usuario = ? AND u.correo = ? AND t.vinculada = TRUE`,
+            [numeroTarjeta, nombreUsuario, correo],
+            (err, results) => {
+                if (err) {
+                    console.error('Error al verificar la tarjeta para desvinculación:', err);
+                    return callback(err);
+                }
+    
+                // Verifica si la tarjeta fue encontrada y está vinculada
+                if (results.length === 0) {
+                    return callback(new Error('La tarjeta no está vinculada a este usuario o ya está desvinculada'));
+                }
+    
+                // Desvincula la tarjeta
+                db.query(
+                    'UPDATE tarjetas_credito SET vinculada = FALSE WHERE numero_tarjeta = ?',
+                    [numeroTarjeta],
+                    (err, results) => {
+                        if (err) {
+                            console.error('Error al desvincular la tarjeta:', err);
+                            return callback(err);
+                        }
+    
+                        // Verifica si alguna fila fue afectada
+                        if (results.affectedRows === 0) {
+                            return callback(new Error('Error al intentar desvincular la tarjeta.'));
+                        }
+    
+                        return callback(null, `La tarjeta ${numeroTarjeta} ha sido desvinculada exitosamente.`);
+                    }
+                );
             }
         );
     },
