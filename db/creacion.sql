@@ -160,7 +160,7 @@ INSERT INTO tipo_cambio (valor_cambio) VALUES (7.50);
 
 -- Datos iniciales de usuarios
 INSERT INTO usuarios (nombre_usuario, correo, pin, notifyme) VALUES
-('juanperez', 'juan.perez@gmail.com', '1234', TRUE),
+('Emilio Maldonado', 'emiliomalrod23@gmail.com', '1234', TRUE),
 ('mariagonzalez', 'maria.gonzalez@gmail.com', '4321', FALSE),
 ('pedroramirez', 'pedro.ramirez@gmail.com', '5678', TRUE),
 ('analopez', 'ana.lopez@gmail.com', '8765', FALSE),
