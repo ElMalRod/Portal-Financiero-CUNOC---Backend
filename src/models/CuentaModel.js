@@ -34,8 +34,8 @@ const CuentaModel = {
     },
 
     // Crear una nueva cuenta (tarjeta de crédito)
-    crearCuenta: (nombre_usuario, id_usuario, id_tipo_cuenta, numero_tarjeta, callback) => {
-        // Consultar tipo de cambio si es cuenta "gold"
+    crearCuenta: (nombre_usuario, id_usuario, id_tipo_cuenta, numero_tarjeta, limite_personalizado , callback) => {
+        // Consultar tipo de cuenta
         const queryTipoCuenta = `
             SELECT limite_credito, moneda
             FROM tipos_cuenta
@@ -52,7 +52,13 @@ const CuentaModel = {
                 return callback(new Error('Tipo de cuenta no encontrado'));
             }
 
-            const { limite_credito, moneda } = results[0];
+            let { limite_credito, moneda } = results[0];
+
+            // Asignar límite personalizado si es de tipo personalizada
+            if (id_tipo_cuenta === 'personalizada') {
+                limite_credito = limite_personalizado;
+                console.log('Asignando límite personalizado:', limite_personalizado);
+            }
 
             // Verificar si es cuenta en dólares y obtener el tipo de cambio
             if (moneda === 'Dólares') {
@@ -82,7 +88,7 @@ const CuentaModel = {
                         callback(null, result);
                     });
                 });
-            } else {
+            } else if (moneda === 'Quetzales') {
                 // Insertar la tarjeta sin conversión si es en quetzales
                 const insertQuery = `
                     INSERT INTO tarjetas_credito (numero_tarjeta, id_usuario, id_tipo_cuenta, limite_credito)
@@ -96,8 +102,26 @@ const CuentaModel = {
                     callback(null, result);
                 });
             }
+            else //personalizada
+            {
+                console.log('Límite de crédito final antes de insertar:', limite_credito);
+
+                const insertQuery = `
+                    INSERT INTO tarjetas_credito (numero_tarjeta, id_usuario, id_tipo_cuenta, limite_credito)
+                    VALUES (?, ?, ?, ?)
+                `;
+                db.query(insertQuery, [numero_tarjeta, id_usuario, id_tipo_cuenta, limite_personalizado], (err, result) => {
+                    if (err) {
+                        console.error('Error al crear la cuenta:', err);
+                        return callback(err);
+                    }
+                    callback(null, result);
+                });
+            }
         });
     },
+
+
  
     // Eliminar una cuenta por id_usuario y registrar motivo
     eliminarCuenta: (id_usuario, motivo_cierre, callback) => {

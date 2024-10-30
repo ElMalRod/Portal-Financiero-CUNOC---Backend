@@ -5,42 +5,45 @@ const CuentaModel = require('../models/CuentaModel');
     };
     
     const CuentaController = {
-        // Crear una nueva cuenta (tarjeta de crédito) para un usuario existente o nuevo
         crearCuenta: (req, res) => {
-            const { nombre_usuario, tipo_cuenta, numero_tarjeta, notify = false, rol } = req.body;
-    
+            const { nombre_usuario, tipo_cuenta, numero_tarjeta, limite_personalizado = null, notify = false, rol } = req.body;
+            console.log('Datos recibidos del front:', { nombre_usuario, tipo_cuenta, numero_tarjeta, limite_personalizado, notify, rol });
             // Validar el tipo de cuenta
-            if (!['normal', 'gold'].includes(tipo_cuenta)) {
-                return res.status(400).json({ error: 'Tipo de cuenta no válido. Debe ser "normal" o "gold".' });
+            if (!['normal', 'gold', 'personalizada'].includes(tipo_cuenta)) {
+                return res.status(400).json({ error: 'Tipo de cuenta no válido. Debe ser "normal", "gold" o "personalizada".' });
             }
-    
+        
             // Validar el rol
             if (!['cliente', 'admin'].includes(rol)) {
                 return res.status(400).json({ error: 'Rol no válido. Debe ser "cliente" o "admin".' });
             }
-    
+        
             // Formatear el nombre de usuario y crear el correo
             const nombreUsuarioFormateado = nombre_usuario.replace(/\s+/g, '').toLowerCase();
             const correo = `${nombreUsuarioFormateado}.${tipo_cuenta}@${numero_tarjeta}.com`;
-    
+        
             // Generar un pin aleatorio de 4 dígitos
             const pin = generarPinAleatorio();
-    
+        
             // Verificar si el usuario ya existe
             CuentaModel.verificarUsuario(nombre_usuario, (err, usuarioExistente) => {
                 if (err) {
                     return res.status(500).json({ error: 'Error al verificar el usuario' });
                 }
-    
+        
                 const id_usuario_callback = (usuarioId) => {
                     // Obtener la información del tipo de cuenta
                     CuentaModel.obtenerTipoCuenta(tipo_cuenta, (err, tipoCuenta) => {
                         if (err || !tipoCuenta) {
+                            console.error('Error al obtener tipo de cuenta:', err || 'Tipo de cuenta no encontrado');
                             return res.status(500).json({ error: 'Error al obtener tipo de cuenta' });
                         }
-    
+        
+                        // Asegúrate de que limite_personalizado sea un decimal solo para cuentas personalizadas
+                        const limiteCreditoDecimal = tipo_cuenta === 'personalizada' ? parseFloat(limite_personalizado) : 0.00;
+                        console.log('Límite de crédito asignado:', limiteCreditoDecimal);
                         // Crear la cuenta (tarjeta de crédito) asociada al usuario
-                        CuentaModel.crearCuenta(nombre_usuario, usuarioId, tipoCuenta.id_tipo_cuenta, numero_tarjeta, (err, result) => {
+                        CuentaModel.crearCuenta(nombre_usuario, usuarioId, tipoCuenta.id_tipo_cuenta, numero_tarjeta, limiteCreditoDecimal, (err, result) => {
                             if (err) {
                                 console.error('Error al crear la cuenta:', err);
                                 return res.status(500).json({ error: 'Error al crear la cuenta' });
@@ -53,7 +56,7 @@ const CuentaModel = require('../models/CuentaModel');
                         });
                     });
                 };
-    
+        
                 if (!usuarioExistente) {
                     // Si el usuario no existe, crearlo primero
                     CuentaModel.crearUsuario(nombre_usuario, correo, pin, notify, rol, (err, usuarioId) => {

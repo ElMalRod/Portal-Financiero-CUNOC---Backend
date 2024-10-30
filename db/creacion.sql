@@ -15,7 +15,7 @@ CREATE TABLE usuarios (
 -- Tabla para almacenar los tipos de cuentas
 CREATE TABLE tipos_cuenta (
     id_tipo_cuenta INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_tipo VARCHAR(10) NOT NULL, -- Normal o Gold
+    nombre_tipo VARCHAR(20) NOT NULL, -- Normal o Gold
     moneda VARCHAR(10) NOT NULL, -- Quetzales o Dólares
     limite_credito DECIMAL(10, 2) NOT NULL
 );
@@ -153,7 +153,8 @@ INSERT INTO FAQ (pregunta, respuesta) VALUES
 -- Datos iniciales para tipos de cuenta
 INSERT INTO tipos_cuenta (nombre_tipo, moneda, limite_credito) VALUES 
 ('normal', 'Quetzales', 3000.00),
-('gold', 'Dólares', 1000.00);
+('gold', 'Dólares', 1000.00),
+('personalizada', '', 0.00);
 
 -- Insertar un valor inicial en la tabla tipo_cambio
 INSERT INTO tipo_cambio (valor_cambio) VALUES (7.50);
